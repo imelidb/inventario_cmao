@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inventario - Contraloría Municipio Angostura del Orinoco</title>
+  <style>
+    :root{
+      --color1:#F1F4DF;
+      --color2:#10EAF0;
+      --color3:#0028FF;
+      --color4:#24009C;
+      --text:#1a1a1a;
+      --muted:#6b7280;
+      --radius:12px;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    body{
+      margin:0;
+      background:var(--color1);
+      color:var(--text);
+    }
+
+    header{
+      background:var(--color4);
+      color:white;
+      padding:12px 20px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+    header img{height:64px;width:auto;border-radius:8px;background:white;padding:4px}
+    header h1{margin:0;font-size:20px}
+    header p{margin:0;font-size:13px;color:#e0e0e0}
+
+    .wrap{max-width:1200px;margin:20px auto;padding:0 16px;}
+
+    .grid{display:grid;grid-template-columns:1fr 380px;gap:20px}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      background:white;
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    h2{margin-top:0;font-size:17px;color:var(--color4)}
+
+    label{font-size:13px;color:var(--muted)}
+    input,select,textarea{
+      width:100%;
+      padding:8px;
+      border:1px solid #d1d5db;
+      border-radius:8px;
+      margin-top:4px;
+      font-size:14px;
+    }
+    textarea{resize:vertical;min-height:50px}
+
+    button{
+      background:var(--color3);
+      color:white;
+      border:none;
+      padding:10px 14px;
+      border-radius:8px;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.2s;
+    }
+    button:hover{background:var(--color4)}
+    .btn-danger{background:#e11d48}
+    .btn-danger:hover{background:#9f1239}
+
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:8px;border-bottom:1px solid #e5e7eb}
+    th{background:var(--color2);color:#000;text-align:left}
+
+    .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:10px}
+    .stat{background:var(--color2);padding:10px;border-radius:10px;text-align:center}
+    .stat .num{font-size:18px;font-weight:700}
+
+    .badge{padding:4px 8px;border-radius:999px;font-size:12px;color:white}
+    .in{background:#16a34a}
+    .out{background:#dc2626}
+
+    footer{margin:20px 0;text-align:center;font-size:12px;color:var(--muted)}
+  </style>
+
+  <!-- Librerías para PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+  <header>
+    <img src="1000485294.jpg" alt="Logo CMAO">
+    <div>
+      <h1>Inventario de Papelería y Útiles</h1>
+      <p>Contraloría del Municipio Angostura del Orinoco - Estado Bolívar</p>
+    </div>
+  </header>
+
+  <div class="wrap grid">
+    <!-- Panel izquierdo -->
+    <div>
+      <div class="card">
+        <h2>Movimientos recientes</h2>
+        <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <!-- mantengo el botón con el id original para no romper nada -->
+          <button id="btnExport">Exportar PDF</button>
+          <button id="btnClear" class="btn-danger">Borrar todo</button>
+        </div>
+        <table id="movTable">
+          <thead>
+            <tr><th>Fecha</th><th>Tipo</th><th>Ítem</th><th>Cant.</th><th>Obs.</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="summary" id="summaryCards"></div>
+      </div>
+
+      <div class="card" style="margin-top:20px">
+        <h2>Stock actual</h2>
+        <table id="stockTable">
+          <thead><tr><th>Ítem</th><th>Unidad</th><th>Cantidad</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Panel derecho -->
+    <aside class="card">
+      <h2>Registrar movimiento</h2>
+      <form id="movForm">
+        <label>Tipo</label>
+        <select id="tipo"><option value="entrada">Entrada</option><option value="salida">Salida</option></select>
+        <label>Ítem</label>
+        <input id="item" type="text" required>
+        <label>Unidad</label>
+        <input id="unidad" type="text" placeholder="ej. resma, caja, und">
+        <label>Cantidad</label>
+        <input id="cantidad" type="number" min="1" value="1" required>
+        <label>Fecha</label>
+        <input id="fecha" type="date" required>
+        <label>Observaciones</label>
+        <textarea id="obs"></textarea>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button type="submit">Registrar</button>
+        </div>
+      </form>
+    </aside>
+  </div>
+
+  <footer>
+    Sistema de Inventario • Contraloría Municipal Angostura del Orinoco • Septiembre 2025 (Ing. Imelid Barreto)
+  </footer>
+
+  <script>
+    const LS_KEY = "inventario_cmao";
+    let state = {movimientos:[],stock:{}};
+
+    const $ = sel => document.querySelector(sel);
+
+    function save(){ localStorage.setItem(LS_KEY,JSON.stringify(state)); }
+    function load(){ let raw=localStorage.getItem(LS_KEY); if(raw){ try{ state=JSON.parse(raw); }catch(e){ state={movimientos:[],stock:{}} } } }
+
+    function render(){
+      // movimientos
+      const tbody=$("#movTable tbody"); tbody.innerHTML="";
+      const rows=state.movimientos.slice().sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
+      for(const m of rows){
+        let tr=document.createElement("tr");
+        tr.innerHTML=`<td>${m.fecha}</td>
+          <td><span class="badge ${m.tipo=="entrada"?"in":"out"}">${m.tipo}</span></td>
+          <td>${m.item}</td><td>${m.cantidad}</td><td>${m.obs||""}</td>`;
+        tbody.appendChild(tr);
+      }
+      // stock
+      const tb2=$("#stockTable tbody"); tb2.innerHTML="";
+      for(const k in state.stock){
+        let s=state.stock[k];
+        let tr=document.createElement("tr");
+        tr.innerHTML=`<td>${s.item}</td><td>${s.unidad}</td><td>${s.cantidad}</td>`;
+        tb2.appendChild(tr);
+      }
+      // resumen
+      const sum=$("#summaryCards"); sum.innerHTML="";
+      let totalItems=Object.keys(state.stock).length;
+      let totalQty=Object.values(state.stock).reduce((a,b)=>a + (Number(b.cantidad)||0),0);
+      let div=document.createElement("div"); div.className="stat";
+      div.innerHTML=`<div class="num">${totalItems}</div><div>Ítems</div>`; sum.appendChild(div);
+      let div2=document.createElement("div"); div2.className="stat";
+      div2.innerHTML=`<div class="num">${totalQty}</div><div>Total Unidades</div>`; sum.appendChild(div2);
+    }
+
+    function addMov(m){
+      let key = (m.item||'').toLowerCase().trim() + "||" + (m.unidad||'').toLowerCase().trim();
+      if(!state.stock[key]) state.stock[key] = { item: m.item, unidad: m.unidad, cantidad: 0 };
+      if(m.tipo === "entrada") state.stock[key].cantidad = Number(state.stock[key].cantidad) + Number(m.cantidad);
+      else state.stock[key].cantidad = Number(state.stock[key].cantidad) - Number(m.cantidad);
+      if(state.stock[key].cantidad < 0) state.stock[key].cantidad = 0;
+      state.movimientos.push(m);
+      save(); render();
+    }
+
+    // carga asíncrona de imagen -> dataURL (maneja errores)
+    function loadImageAsDataURL(src){
+      return new Promise(resolve => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+          try{
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img,0,0);
+            const data = canvas.toDataURL('image/jpeg');
+            resolve(data);
+          }catch(e){
+            // si falla (CORS o similar), devolvemos el src y jsPDF intentará cargarlo (puede fallar en file://)
+            resolve(src);
+          }
+        };
+        img.onerror = () => resolve(null);
+        img.src = src;
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded",()=>{
+      load(); render();
+      let today=new Date().toISOString().slice(0,10);
+      $("#fecha").value = today;
+
+      $("#movForm").addEventListener("submit", e=>{
+        e.preventDefault();
+        addMov({
+          tipo: $("#tipo").value,
+          item: $("#item").value.trim(),
+          unidad: $("#unidad").value.trim() || "und",
+          cantidad: Number($("#cantidad").value),
+          fecha: $("#fecha").value,
+          obs: $("#obs").value
+        });
+        e.target.reset();
+        $("#fecha").value = today;
+      });
+
+      // PDF: carga logos, valida stock y movimientos, genera encabezado en todas las páginas y pie "Página X de Y"
+      $("#btnExport").addEventListener("click", async ()=>{
+        // Validaciones: bloquear si no hay stock o no hay movimientos
+        const stockKeys = Object.keys(state.stock || {});
+        if(stockKeys.length === 0){
+          alert("¡Epa! No hay stock registrado para generar el reporte. ⚠️⚠️⚠️ ");
+          return;
+        }
+        if(!state.movimientos || state.movimientos.length === 0){
+          alert("No hay movimientos registrados para generar el reporte.");
+          return;
+        }
+        $("#btnClear").addEventListener("click", () => {
+  
+            // Validar si hay datos antes de borrar
+  if (state.movimientos.length === 0 && Object.keys(state.stock).length === 0) {
+    alert("No hay datos para borrar.");
+    return;
+  }
+
+  if (confirm("¿Estas Completamente segur@ de Borrar todos los datos? 😳 Esta acción no se puede deshacer, no la vayas a cagar 👀.")) {
+    state = { movimientos: [], stock: {} };
+    save();
+    render();
+  }
+});
+
+        // Cargar imágenes (asegúrate de tener estos archivos en la misma carpeta)
+        const leftLogo = await loadImageAsDataURL('1000485294.jpg');   // Contraloría (izquierda)
+        const rightLogo = await loadImageAsDataURL('1000753989.jpg');  // SNFC (derecha)
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const headerHeight = 60; // reservar espacio para encabezado
+
+        // Agregar las tablas usando autoTable — dejar margen superior para encabezado
+        // Stock table
+        doc.autoTable({
+          head: [['Ítem','Unidad','Cantidad']],
+          body: Object.values(state.stock).map(s => [s.item, s.unidad, s.cantidad]),
+          margin: { top: headerHeight },
+          styles: { halign: 'center' },
+          headStyles: { fillColor: [36,0,156] } // color header (opcional)
+        });
+
+        // Movements table — comienza debajo de la tabla anterior
+        let finalY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 20 : headerHeight + 20;
+        doc.autoTable({
+          head: [['Fecha','Tipo','Ítem','Unidad','Cantidad','Observaciones']],
+          body: state.movimientos.map(m => [m.fecha || '', m.tipo || '', m.item || '', m.unidad || '', m.cantidad || '', m.obs || '']),
+          startY: finalY,
+          styles: { fontSize: 9, halign: 'center', cellPadding: 4 },
+          headStyles: { fillColor: [36,0,156] }
+        });
+
+        // Ahora que las tablas están generadas, obtenemos el número total de páginas
+        const pageCount = (typeof doc.getNumberOfPages === 'function') ? doc.getNumberOfPages() : doc.internal.getNumberOfPages();
+
+        // Dibujar encabezado y pie en cada página
+        for(let i = 1; i <= pageCount; i++){
+          doc.setPage(i);
+
+          // Encabezado: logos y textos
+          // izquierda
+          if(leftLogo){
+            try{ doc.addImage(leftLogo, 'JPEG', 20, 18, 60, 36); } catch(e){ /*ignore*/ }
+          }
+          // derecha
+          if(rightLogo){
+            try{ doc.addImage(rightLogo, 'JPEG', pageWidth - 80, 18, 60, 36); } catch(e){ /*ignore*/ }
+          }
+
+          // Textos centrales del encabezado
+          doc.setFontSize(11);
+          doc.setTextColor(0,0,0);
+          doc.setFont(undefined, 'bold');
+          doc.text("República Bolivariana de Venezuela", pageWidth/2, 24, { align: 'center' });
+          doc.setFontSize(10);
+          doc.setFont(undefined, 'normal');
+          doc.text("Ciudad Bolívar - Estado Bolívar", pageWidth/2, 38, { align: 'center' });
+          doc.text("Contraloría del Municipio Angostura del Orinoco", pageWidth/2, 52, { align: 'center' });
+          doc.text("Departamento de Administraciòn, Planificaciòn y Presupuesto", pageWidth/2, 72, { align: 'center' });
+
+          // Pie de página con numeración "Página X de Y"
+          const pageHeight = doc.internal.pageSize.getHeight();
+          doc.setFontSize(9);
+          doc.text(`Página ${i} de ${pageCount}`, pageWidth/2, pageHeight - 20, { align: 'center' });
+        }
+
+        // Guardar PDF
+        doc.save("inventario.pdf");
+      });
+
+      $("#btnClear").addEventListener("click",()=>{
+        if(confirm("¿Estas Completamente segur@ de borrar todos los datos? 😳 Esta acción no se puede deshacer, no la vayas a cagar 👀")){
+          state={movimientos:[],stock:{}}; save(); render();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
