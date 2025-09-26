@@ -275,13 +275,13 @@
 });
 
         // Cargar imágenes (asegúrate de tener estos archivos en la misma carpeta)
-        const leftLogo = await loadImageAsDataURL('1000485294.jpg');   // Contraloría (izquierda)
-        const rightLogo = await loadImageAsDataURL('1000753989.jpg');  // SNFC (derecha)
+        const leftLogo = await loadImageAsDataURL('CGR EN NEDRO (PNG).png');   // Contraloría (izquierda)
+        const rightLogo = await loadImageAsDataURL('5080122107400138485_121.jpg');  // SNFC (derecha)
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
         const pageWidth = doc.internal.pageSize.getWidth();
-        const headerHeight = 60; // reservar espacio para encabezado
+        const headerHeight = 80; // reservar espacio para encabezado
 
         // Agregar las tablas usando autoTable — dejar margen superior para encabezado
         // Stock table
@@ -349,4 +349,5 @@
     });
   </script>
 </body>
+
 </html>
