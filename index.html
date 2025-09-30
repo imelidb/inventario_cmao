@@ -16,59 +16,24 @@
       font-family: "Segoe UI", Roboto, Arial, sans-serif;
     }
 
-    body{
-      margin:0;
-      background:var(--color1);
-      color:var(--text);
-    }
-
-    header{
-      background:var(--color4);
-      color:white;
-      padding:12px 20px;
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
+    body{margin:0; background:var(--color1); color:var(--text);}
+    header{background:var(--color4); color:white; padding:12px 20px; display:flex; align-items:center; gap:14px;}
     header img{height:64px;width:auto;border-radius:8px;background:white;padding:4px}
     header h1{margin:0;font-size:20px}
     header p{margin:0;font-size:13px;color:#e0e0e0}
 
     .wrap{max-width:1200px;margin:20px auto;padding:0 16px;}
-
     .grid{display:grid;grid-template-columns:1fr 380px;gap:20px}
     @media(max-width:900px){.grid{grid-template-columns:1fr}}
 
-    .card{
-      background:white;
-      border-radius:var(--radius);
-      padding:16px;
-      box-shadow:0 4px 12px rgba(0,0,0,0.08);
-    }
-
+    .card{background:white;border-radius:var(--radius);padding:16px;box-shadow:0 4px 12px rgba(0,0,0,0.08);}
     h2{margin-top:0;font-size:17px;color:var(--color4)}
 
     label{font-size:13px;color:var(--muted)}
-    input,select,textarea{
-      width:100%;
-      padding:8px;
-      border:1px solid #d1d5db;
-      border-radius:8px;
-      margin-top:4px;
-      font-size:14px;
-    }
+    input,select,textarea{width:100%;padding:8px;border:1px solid #d1d5db;border-radius:8px;margin-top:4px;font-size:14px;}
     textarea{resize:vertical;min-height:50px}
 
-    button{
-      background:var(--color3);
-      color:white;
-      border:none;
-      padding:10px 14px;
-      border-radius:8px;
-      font-weight:600;
-      cursor:pointer;
-      transition:0.2s;
-    }
+    button{background:var(--color3);color:white;border:none;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer;transition:0.2s;}
     button:hover{background:var(--color4)}
     .btn-danger{background:#e11d48}
     .btn-danger:hover{background:#9f1239}
@@ -107,13 +72,50 @@
       <div class="card">
         <h2>Movimientos recientes</h2>
         <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap">
-          <!-- mantengo el botón con el id original para no romper nada -->
           <button id="btnExport">Exportar PDF</button>
           <button id="btnClear" class="btn-danger">Borrar todo</button>
         </div>
+        <label>Filtrar por dependencia:</label>
+        <select id="filtroDependencia">
+          <option value="">Todas</option>
+          <!-- 33 dependencias aquí -->
+          <option>Despacho del Contralor(a)</option>
+          <option>Despacho del Sub-Contralor</option>
+          <option>Departamento de Seguridad Física</option>
+          <option>Dirección de Despacho</option>
+          <option>Dirección de Consultoría Jurídica</option>
+          <option>Dirección de Relaciones Interinstitucionales</option>
+          <option>Dirección de Determinación de Responsabilidades</option>
+          <option>Dirección de Bienes</option>
+          <option>Departamento de Bienes</option>
+          <option>Dirección de Atención al Ciudadano</option>
+          <option>Departamento de Atención al Ciudadano</option>
+          <option>Dirección de Control Posterior para la Administración Centralizada</option>
+          <option>Departamento de Auditorías de Control Posterior para la Administración Centralizada</option>
+          <option>Departamento de Potestad Investigativa de Control Posterior para la Administración Centralizada</option>
+          <option>Dirección de Control Posterior para la Administración Descentralizada y Otro Poder</option>
+          <option>Departamento de Auditorías de Control Posterior para la Administración Descentralizada y Otro Poder</option>
+          <option>Departamento de Potestad Investigativa de Control Posterior para la Administración Descentralizada y Otro Poder</option>
+          <option>Dirección de Informática y Sistemas</option>
+          <option>Departamento de Informática y Sistemas</option>
+          <option>Departamento de Métodos y Procedimientos</option>
+          <option>Dirección de Talento Humano</option>
+          <option>Departamento de Talento Humano</option>
+          <option>Coordinación de Higiene, ambiente y salud laboral</option>
+          <option>Dirección de Administración y Servicios Generales</option>
+          <option>Departamento de Administración, planificación y presupuesto</option>
+          <option>Departamento de Contabilidad</option>
+          <option>Departamento de Archivo Central</option>
+          <option>Departamento de Servicios Generales y Manteniendo</option>
+          <option>Coordinación de Servicios Generales y Mantenimiento</option>
+          <option>Dirección de Auditoría Interna</option>
+          <option>Departamento de Control Posterior (AI)</option>
+          <option>Departamento de Determinación de Responsabilidades (AI)</option>
+        </select>
+
         <table id="movTable">
           <thead>
-            <tr><th>Fecha</th><th>Tipo</th><th>Ítem</th><th>Cant.</th><th>Obs.</th></tr>
+            <tr><th>Fecha</th><th>Tipo</th><th>Ítem</th><th>Cant.</th><th>Dependencia</th></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -134,7 +136,11 @@
       <h2>Registrar movimiento</h2>
       <form id="movForm">
         <label>Tipo</label>
-        <select id="tipo"><option value="entrada">Entrada</option><option value="salida">Salida</option></select>
+        <select id="tipo">
+          <option value="entrada">Entrada</option>
+          <option value="salida">Salida</option>
+        </select>
+
         <label>Ítem</label>
         <input id="item" type="text" required>
         <label>Unidad</label>
@@ -143,6 +149,47 @@
         <input id="cantidad" type="number" min="1" value="1" required>
         <label>Fecha</label>
         <input id="fecha" type="date" required>
+
+        <div id="dependenciaBox" style="display:none;">
+          <label for="dependencia">Dependencia/Dirección</label>
+          <select id="dependencia">
+            <option value="">Seleccione...</option>
+            <!-- mismas 33 dependencias -->
+            <option>Despacho del Contralor(a)</option>
+            <option>Despacho del Sub-Contralor</option>
+            <option>Departamento de Seguridad Física</option>
+            <option>Dirección de Despacho</option>
+            <option>Dirección de Consultoría Jurídica</option>
+            <option>Dirección de Relaciones Interinstitucionales</option>
+            <option>Dirección de Determinación de Responsabilidades</option>
+            <option>Dirección de Bienes</option>
+            <option>Departamento de Bienes</option>
+            <option>Dirección de Atención al Ciudadano</option>
+            <option>Departamento de Atención al Ciudadano</option>
+            <option>Dirección de Control Posterior para la Administración Centralizada</option>
+            <option>Departamento de Auditorías de Control Posterior para la Administración Centralizada</option>
+            <option>Departamento de Potestad Investigativa de Control Posterior para la Administración Centralizada</option>
+            <option>Dirección de Control Posterior para la Administración Descentralizada y Otro Poder</option>
+            <option>Departamento de Auditorías de Control Posterior para la Administración Descentralizada y Otro Poder</option>
+            <option>Departamento de Potestad Investigativa de Control Posterior para la Administración Descentralizada y Otro Poder</option>
+            <option>Dirección de Informática y Sistemas</option>
+            <option>Departamento de Informática y Sistemas</option>
+            <option>Departamento de Métodos y Procedimientos</option>
+            <option>Dirección de Talento Humano</option>
+            <option>Departamento de Talento Humano</option>
+            <option>Coordinación de Higiene, ambiente y salud laboral</option>
+            <option>Dirección de Administración y Servicios Generales</option>
+            <option>Departamento de Administración, planificación y presupuesto</option>
+            <option>Departamento de Contabilidad</option>
+            <option>Departamento de Archivo Central</option>
+            <option>Departamento de Servicios Generales y Manteniendo</option>
+            <option>Coordinación de Servicios Generales y Mantenimiento</option>
+            <option>Dirección de Auditoría Interna</option>
+            <option>Departamento de Control Posterior (AI)</option>
+            <option>Departamento de Determinación de Responsabilidades (AI)</option>
+          </select>
+        </div>
+
         <label>Observaciones</label>
         <textarea id="obs"></textarea>
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
@@ -157,25 +204,29 @@
   </footer>
 
   <script>
-    const LS_KEY = "inventario_cmao";
-    let state = {movimientos:[],stock:{}};
-
+    const LS_KEY="inventario_cmao";
+    let state={movimientos:[],stock:{}};
     const $ = sel => document.querySelector(sel);
 
-    function save(){ localStorage.setItem(LS_KEY,JSON.stringify(state)); }
-    function load(){ let raw=localStorage.getItem(LS_KEY); if(raw){ try{ state=JSON.parse(raw); }catch(e){ state={movimientos:[],stock:{}} } } }
+    function save(){localStorage.setItem(LS_KEY,JSON.stringify(state))}
+    function load(){let raw=localStorage.getItem(LS_KEY); if(raw){ try{state=JSON.parse(raw)}catch(e){state={movimientos:[],stock:{}}}}}
 
     function render(){
+      let filtroDep=$("#filtroDependencia").value;
+      const movsFiltrados = state.movimientos.filter(m=> !filtroDep || m.dependencia===filtroDep);
+
       // movimientos
       const tbody=$("#movTable tbody"); tbody.innerHTML="";
-      const rows=state.movimientos.slice().sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
-      for(const m of rows){
+      movsFiltrados.slice().sort((a,b)=> new Date(b.fecha)-new Date(a.fecha)).forEach(m=>{
         let tr=document.createElement("tr");
         tr.innerHTML=`<td>${m.fecha}</td>
           <td><span class="badge ${m.tipo=="entrada"?"in":"out"}">${m.tipo}</span></td>
-          <td>${m.item}</td><td>${m.cantidad}</td><td>${m.obs||""}</td>`;
+          <td>${m.item}</td>
+          <td>${m.cantidad}</td>
+          <td>${m.tipo==="salida"?m.dependencia:"-"}</td>`;
         tbody.appendChild(tr);
-      }
+      });
+
       // stock
       const tb2=$("#stockTable tbody"); tb2.innerHTML="";
       for(const k in state.stock){
@@ -184,6 +235,7 @@
         tr.innerHTML=`<td>${s.item}</td><td>${s.unidad}</td><td>${s.cantidad}</td>`;
         tb2.appendChild(tr);
       }
+
       // resumen
       const sum=$("#summaryCards"); sum.innerHTML="";
       let totalItems=Object.keys(state.stock).length;
@@ -195,163 +247,119 @@
     }
 
     function addMov(m){
-      let key = (m.item||'').toLowerCase().trim() + "||" + (m.unidad||'').toLowerCase().trim();
-      if(!state.stock[key]) state.stock[key] = { item: m.item, unidad: m.unidad, cantidad: 0 };
-      if(m.tipo === "entrada") state.stock[key].cantidad = Number(state.stock[key].cantidad) + Number(m.cantidad);
-      else state.stock[key].cantidad = Number(state.stock[key].cantidad) - Number(m.cantidad);
-      if(state.stock[key].cantidad < 0) state.stock[key].cantidad = 0;
+      let key=(m.item||'').toLowerCase().trim()+"||"+(m.unidad||'').toLowerCase().trim();
+      if(!state.stock[key]) state.stock[key]={item:m.item,unidad:m.unidad,cantidad:0};
+      if(m.tipo==="entrada") state.stock[key].cantidad += Number(m.cantidad);
+      else state.stock[key].cantidad -= Number(m.cantidad);
+      if(state.stock[key].cantidad<0) state.stock[key].cantidad=0;
       state.movimientos.push(m);
       save(); render();
     }
 
-    // carga asíncrona de imagen -> dataURL (maneja errores)
-    function loadImageAsDataURL(src){
-      return new Promise(resolve => {
+    async function loadImageAsDataURL(url){
+      return new Promise((resolve,reject)=>{
         const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.onload = () => {
-          try{
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img,0,0);
-            const data = canvas.toDataURL('image/jpeg');
-            resolve(data);
-          }catch(e){
-            // si falla (CORS o similar), devolvemos el src y jsPDF intentará cargarlo (puede fallar en file://)
-            resolve(src);
-          }
-        };
-        img.onerror = () => resolve(null);
-        img.src = src;
+        img.crossOrigin="Anonymous";
+        img.onload=()=>{ 
+          const canvas=document.createElement('canvas');
+          canvas.width=img.width; canvas.height=img.height;
+          canvas.getContext('2d').drawImage(img,0,0);
+          resolve(canvas.toDataURL('image/jpeg'));
+        }
+        img.onerror=reject;
+        img.src=url;
       });
     }
 
-    document.addEventListener("DOMContentLoaded",()=>{
+    document.addEventListener("DOMContentLoaded", async ()=>{
       load(); render();
       let today=new Date().toISOString().slice(0,10);
-      $("#fecha").value = today;
+      $("#fecha").value=today;
 
-      $("#movForm").addEventListener("submit", e=>{
-        e.preventDefault();
-        addMov({
-          tipo: $("#tipo").value,
-          item: $("#item").value.trim(),
-          unidad: $("#unidad").value.trim() || "und",
-          cantidad: Number($("#cantidad").value),
-          fecha: $("#fecha").value,
-          obs: $("#obs").value
-        });
-        e.target.reset();
-        $("#fecha").value = today;
+      $("#tipo").addEventListener("change",()=>{
+        if($("#tipo").value==="salida") $("#dependenciaBox").style.display="block";
+        else {$("#dependenciaBox").style.display="none"; $("#dependencia").value="";}
       });
 
-      // PDF: carga logos, valida stock y movimientos, genera encabezado en todas las páginas y pie "Página X de Y"
+      $("#movForm").addEventListener("submit",e=>{
+        e.preventDefault();
+        const mov={
+          fecha:$("#fecha").value,
+          item:$("#item").value.trim(),
+          unidad:$("#unidad").value.trim()||"und",
+          cantidad:Number($("#cantidad").value),
+          tipo:$("#tipo").value,
+          dependencia: $("#tipo").value==="salida"?$("#dependencia").value:"",
+          obs:$("#obs").value
+        };
+        addMov(mov);
+        e.target.reset();
+        $("#fecha").value=today;
+      });
+
+      $("#filtroDependencia").addEventListener("change",()=>render());
+
       $("#btnExport").addEventListener("click", async ()=>{
-        // Validaciones: bloquear si no hay stock o no hay movimientos
-        const stockKeys = Object.keys(state.stock || {});
-        if(stockKeys.length === 0){
-          alert("¡Epa! No hay stock registrado para generar el reporte. ⚠️⚠️⚠️ ");
-          return;
-        }
-        if(!state.movimientos || state.movimientos.length === 0){
-          alert("No hay movimientos registrados para generar el reporte.");
-          return;
-        }
-        $("#btnClear").addEventListener("click", () => {
-  
-            // Validar si hay datos antes de borrar
-  if (state.movimientos.length === 0 && Object.keys(state.stock).length === 0) {
-    alert("No hay datos para borrar.");
-    return;
-  }
+        if(state.movimientos.length===0){alert("No hay movimientos registrados para generar el PDF."); return;}
+        if(!confirm("¿Desea generar el PDF del inventario?")) return;
 
-  if (confirm("¿Estas Completamente segur@ de Borrar todos los datos? 😳 Esta acción no se puede deshacer, no la vayas a cagar 👀.")) {
-    state = { movimientos: [], stock: {} };
-    save();
-    render();
-  }
-});
-
-        // Cargar imágenes (asegúrate de tener estos archivos en la misma carpeta)
         const leftLogo = await loadImageAsDataURL('Logo cmao.jpg');   // Contraloría (izquierda)
         const rightLogo = await loadImageAsDataURL('5080122107400138485_121.jpg');  // SNFC (derecha)
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const headerHeight = 80; // reservar espacio para encabezado
+        const { jsPDF }=window.jspdf;
+        const doc=new jsPDF({unit:'pt',format:'a4'});
+        const pageWidth=doc.internal.pageSize.getWidth();
+        const headerHeight=90;
 
-        // Agregar las tablas usando autoTable — dejar margen superior para encabezado
-        // Stock table
+        // Stock
         doc.autoTable({
-          head: [['Ítem','Unidad','Cantidad']],
-          body: Object.values(state.stock).map(s => [s.item, s.unidad, s.cantidad]),
-          margin: { top: headerHeight },
-          styles: { halign: 'center' },
-          headStyles: { fillColor: [36,0,156] } // color header (opcional)
+          head:[['Ítem','Unidad','Cantidad']],
+          body:Object.values(state.stock).map(s=>[s.item,s.unidad,s.cantidad]),
+          margin:{top:headerHeight},
+          styles:{halign:'center'},
+          headStyles:{fillColor:[36,0,156]}
         });
 
-        // Movements table — comienza debajo de la tabla anterior
-        let finalY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 20 : headerHeight + 20;
+        let finalY=(doc.lastAutoTable && doc.lastAutoTable.finalY)?doc.lastAutoTable.finalY+20:headerHeight+20;
+
+        // Movimientos
         doc.autoTable({
-          head: [['Fecha','Tipo','Ítem','Unidad','Cantidad','Observaciones']],
-          body: state.movimientos.map(m => [m.fecha || '', m.tipo || '', m.item || '', m.unidad || '', m.cantidad || '', m.obs || '']),
-          startY: finalY,
-          styles: { fontSize: 9, halign: 'center', cellPadding: 4 },
-          headStyles: { fillColor: [36,0,156] }
+          head:[['Fecha','Tipo','Ítem','Unidad','Cantidad','Dependencia','Observaciones']],
+          body:state.movimientos.map(m=>[m.fecha||'',m.tipo||'',m.item||'',m.unidad||'',m.cantidad||'',m.tipo==="salida"?m.dependencia:"-",m.obs||'']),
+          startY:finalY,
+          styles:{fontSize:9,halign:'center',cellPadding:4},
+          headStyles:{fillColor:[36,0,156]}
         });
 
-        // Ahora que las tablas están generadas, obtenemos el número total de páginas
-        const pageCount = (typeof doc.getNumberOfPages === 'function') ? doc.getNumberOfPages() : doc.internal.getNumberOfPages();
+        const pageCount=(typeof doc.getNumberOfPages==='function')?doc.getNumberOfPages():doc.internal.getNumberOfPages();
 
-        // Dibujar encabezado y pie en cada página
-        for(let i = 1; i <= pageCount; i++){
+        for(let i=1;i<=pageCount;i++){
           doc.setPage(i);
+          if(leftLogo){try{ doc.addImage(leftLogo, 'JPEG', 20, 18, 60, 36); } catch(e){}}
+          if(rightLogo){try{ doc.addImage(rightLogo, 'JPEG', pageWidth - 80, 18, 60, 36); } catch(e){}}
 
-          // Encabezado: logos y textos
-          // izquierda
-          if(leftLogo){
-            try{ doc.addImage(leftLogo, 'JPEG', 20, 18, 60, 36); } catch(e){ /*ignore*/ }
-          }
-          // derecha
-          if(rightLogo){
-            try{ doc.addImage(rightLogo, 'JPEG', pageWidth - 80, 18, 60, 36); } catch(e){ /*ignore*/ }
-          }
-
-          // Textos centrales del encabezado
-          doc.setFontSize(11);
-          doc.setTextColor(0,0,0);
-          doc.setFont(undefined, 'bold');
-          doc.text("República Bolivariana de Venezuela", pageWidth/2, 24, { align: 'center' });
-          doc.setFontSize(10);
-          doc.setFont(undefined, 'normal');
+          doc.setFontSize(11); doc.setFont(undefined,'bold'); doc.text("República Bolivariana de Venezuela", pageWidth/2, 24, { align: 'center' });
+          doc.setFontSize(10); doc.setFont(undefined,'normal');
           doc.text("Ciudad Bolívar - Estado Bolívar", pageWidth/2, 38, { align: 'center' });
           doc.text("Contraloría del Municipio Angostura del Orinoco", pageWidth/2, 52, { align: 'center' });
-          doc.text("Departamento de Administraciòn, Planificaciòn y Presupuesto", pageWidth/2, 72, { align: 'center' });
+          doc.text("Departamento de Administración, Planificación y Presupuesto", pageWidth/2, 72, { align: 'center' });
 
-          // Pie de página con numeración "Página X de Y"
           const pageHeight = doc.internal.pageSize.getHeight();
           doc.setFontSize(9);
-          doc.text(`Pág: ${i} de ${pageCount}`, pageWidth/2, pageHeight - 20, { align: 'right' });
-          doc.text(DPTOAPP-XX-XX-25, pageWidth/2, pageHeight-20, { align: 'left' });
+          doc.text(`Pág: ${i} de ${pageCount}`, pageWidth-60, pageHeight - 20);
+          doc.text("DPTOAPP-XX-XX-25", 20, pageHeight - 20);
         }
 
-        // Guardar PDF
         doc.save("inventario.pdf");
       });
 
       $("#btnClear").addEventListener("click",()=>{
-        if(confirm("¿Estas Completamente segur@ de borrar todos los datos? 😳 Esta acción no se puede deshacer 👀")){
-          state={movimientos:[],stock:{}}; save(); render();
+        if(confirm("¿Desea borrar todos los registros?")){
+          state={movimientos:[],stock:{}};
+          save(); render();
         }
       });
     });
   </script>
 </body>
-
 </html>
-
-
-
