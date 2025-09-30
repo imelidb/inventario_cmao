@@ -334,7 +334,8 @@
           // Pie de página con numeración "Página X de Y"
           const pageHeight = doc.internal.pageSize.getHeight();
           doc.setFontSize(9);
-          doc.text(`Página ${i} de ${pageCount}`, pageWidth/2, pageHeight - 20, { align: 'center' });
+          doc.text(`Pág: ${i} de ${pageCount}`, pageWidth/2, pageHeight - 20, { align: 'right' });
+          doc.text(DPTOAPP-XX-XX-25, pageWidth/2, pageHeight-20, { align: 'left' });
         }
 
         // Guardar PDF
@@ -342,7 +343,7 @@
       });
 
       $("#btnClear").addEventListener("click",()=>{
-        if(confirm("¿Estas Completamente segur@ de borrar todos los datos? 😳 Esta acción no se puede deshacer, no la vayas a cagar 👀")){
+        if(confirm("¿Estas Completamente segur@ de borrar todos los datos? 😳 Esta acción no se puede deshacer 👀")){
           state={movimientos:[],stock:{}}; save(); render();
         }
       });
@@ -351,5 +352,6 @@
 </body>
 
 </html>
+
 
 
