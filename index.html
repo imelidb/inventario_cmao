@@ -3,7 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Inventario - Contraloría Municipio Angostura del Orinoco</title>
+  <title>Inventario de Papelería y Útiles
+Contraloría del Municipio Angostura del Orinoco - Estado Bolívar.</title>
+
   <style>
     :root{
       --color1:#F1F4DF;
@@ -15,7 +17,6 @@
       --radius:12px;
       font-family: "Segoe UI", Roboto, Arial, sans-serif;
     }
-
     body{margin:0; background:var(--color1); color:var(--text);}
     header{background:var(--color4); color:white; padding:12px 20px; display:flex; align-items:center; gap:14px;}
     header img{height:64px;width:auto;border-radius:8px;background:white;padding:4px}
@@ -32,6 +33,14 @@
     label{font-size:13px;color:var(--muted)}
     input,select,textarea{width:100%;padding:8px;border:1px solid #d1d5db;border-radius:8px;margin-top:4px;font-size:14px;}
     textarea{resize:vertical;min-height:50px}
+
+    /* Fix: asegurar que el formulario respete column layout y no quede descuadrado */
+    #movForm { display:flex; flex-direction:column; gap:8px; }
+    #movForm .row { display:flex; gap:8px; }
+    @media(min-width:900px){
+      #movForm .row.two { display:flex; }
+      #movForm .row.two > *{ flex:1; }
+    }
 
     button{background:var(--color3);color:white;border:none;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer;transition:0.2s;}
     button:hover{background:var(--color4)}
@@ -51,6 +60,8 @@
     .out{background:#dc2626}
 
     footer{margin:20px 0;text-align:center;font-size:12px;color:var(--muted)}
+    .row-actions button{margin-right:6px;padding:4px 8px;font-size:12px}
+    .small-btn{padding:6px 10px;font-size:13px}
   </style>
 
   <!-- Librerías para PDF -->
@@ -59,10 +70,10 @@
 </head>
 <body>
   <header>
-    <img src="Logo cmao.jpg" alt="Logo CMAO">
+     <img src="1000485294.jpg" alt="Logo CMAO">
     <div>
       <h1>Inventario de Papelería y Útiles</h1>
-      <p>Contraloría del Municipio Angostura del Orinoco - Estado Bolívar</p>
+      <p>Contraloría del Municipio Angostura del Orinoco - Estado Bolívar.</p>
     </div>
   </header>
 
@@ -72,53 +83,25 @@
       <div class="card">
         <h2>Movimientos recientes</h2>
         <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap">
-          <button id="btnExport">Exportar PDF</button>
+          <!-- Botones de export separados (manteniendo la misma ubicación) -->
+          <button id="btnExportAll" class="small-btn">Exportar — Todo</button>
+          <button id="btnExportStock" class="small-btn">Exportar — Inventario</button>
+          <button id="btnExportMoves" class="small-btn">Exportar — Movimientos</button>
+          <button id="btnExportDeps" class="small-btn">Exportar — Resumen Depend.</button>
+
           <button id="btnClear" class="btn-danger">Borrar todo</button>
         </div>
+
         <label>Filtrar por dependencia:</label>
-        <select id="filtroDependencia">
-          <option value="">Todas</option>
-          <!-- 33 dependencias aquí -->
-          <option>Despacho del Contralor(a)</option>
-          <option>Despacho del Sub-Contralor</option>
-          <option>Departamento de Seguridad Física</option>
-          <option>Dirección de Despacho</option>
-          <option>Dirección de Consultoría Jurídica</option>
-          <option>Dirección de Relaciones Interinstitucionales</option>
-          <option>Dirección de Determinación de Responsabilidades</option>
-          <option>Dirección de Bienes</option>
-          <option>Departamento de Bienes</option>
-          <option>Dirección de Atención al Ciudadano</option>
-          <option>Departamento de Atención al Ciudadano</option>
-          <option>Dirección de Control Posterior para la Administración Centralizada</option>
-          <option>Departamento de Auditorías de Control Posterior para la Administración Centralizada</option>
-          <option>Departamento de Potestad Investigativa de Control Posterior para la Administración Centralizada</option>
-          <option>Dirección de Control Posterior para la Administración Descentralizada y Otro Poder</option>
-          <option>Departamento de Auditorías de Control Posterior para la Administración Descentralizada y Otro Poder</option>
-          <option>Departamento de Potestad Investigativa de Control Posterior para la Administración Descentralizada y Otro Poder</option>
-          <option>Dirección de Informática y Sistemas</option>
-          <option>Departamento de Informática y Sistemas</option>
-          <option>Departamento de Métodos y Procedimientos</option>
-          <option>Dirección de Talento Humano</option>
-          <option>Departamento de Talento Humano</option>
-          <option>Coordinación de Higiene, ambiente y salud laboral</option>
-          <option>Dirección de Administración y Servicios Generales</option>
-          <option>Departamento de Administración, planificación y presupuesto</option>
-          <option>Departamento de Contabilidad</option>
-          <option>Departamento de Archivo Central</option>
-          <option>Departamento de Servicios Generales y Manteniendo</option>
-          <option>Coordinación de Servicios Generales y Mantenimiento</option>
-          <option>Dirección de Auditoría Interna</option>
-          <option>Departamento de Control Posterior (AI)</option>
-          <option>Departamento de Determinación de Responsabilidades (AI)</option>
-        </select>
+        <select id="filtroDependencia"></select>
 
         <table id="movTable">
           <thead>
-            <tr><th>Fecha</th><th>Tipo</th><th>Ítem</th><th>Cant.</th><th>Dependencia</th></tr>
+            <tr><th>Fecha</th><th>Tipo</th><th>Ítem</th><th>Cant.</th><th>Dependencia</th><th>Observaciones</th><th>Acciones</th></tr>
           </thead>
           <tbody></tbody>
         </table>
+
         <div class="summary" id="summaryCards"></div>
       </div>
 
@@ -134,66 +117,49 @@
     <!-- Panel derecho -->
     <aside class="card">
       <h2>Registrar movimiento</h2>
-      <form id="movForm">
-        <label>Tipo</label>
-        <select id="tipo">
-          <option value="entrada">Entrada</option>
-          <option value="salida">Salida</option>
-        </select>
 
-        <label>Ítem</label>
-        <input id="item" type="text" required>
-        <label>Unidad</label>
-        <input id="unidad" type="text" placeholder="ej. resma, caja, und">
-        <label>Cantidad</label>
-        <input id="cantidad" type="number" min="1" value="1" required>
-        <label>Fecha</label>
-        <input id="fecha" type="date" required>
+      <!-- FORMULARIO arreglado: layout por filas para evitar descuadre -->
+      <form id="movForm">
+        <div class="row two">
+          <div>
+            <label>Tipo</label>
+            <select id="tipo"><option value="entrada">Entrada</option><option value="salida">Salida</option></select>
+          </div>
+          <div>
+            <label>Fecha</label>
+            <input id="fecha" type="date" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>Ítem</label>
+          <input id="item" type="text" required>
+        </div>
+
+        <div class="row two">
+          <div>
+            <label>Unidad</label>
+            <input id="unidad" type="text" placeholder="ej. resma, caja, und">
+          </div>
+          <div>
+            <label>Cantidad</label>
+            <input id="cantidad" type="number" min="1" value="1" required>
+          </div>
+        </div>
 
         <div id="dependenciaBox" style="display:none;">
           <label for="dependencia">Dependencia/Dirección</label>
-          <select id="dependencia">
-            <option value="">Seleccione...</option>
-            <!-- mismas 33 dependencias -->
-            <option>Despacho del Contralor(a)</option>
-            <option>Despacho del Sub-Contralor</option>
-            <option>Departamento de Seguridad Física</option>
-            <option>Dirección de Despacho</option>
-            <option>Dirección de Consultoría Jurídica</option>
-            <option>Dirección de Relaciones Interinstitucionales</option>
-            <option>Dirección de Determinación de Responsabilidades</option>
-            <option>Dirección de Bienes</option>
-            <option>Departamento de Bienes</option>
-            <option>Dirección de Atención al Ciudadano</option>
-            <option>Departamento de Atención al Ciudadano</option>
-            <option>Dirección de Control Posterior para la Administración Centralizada</option>
-            <option>Departamento de Auditorías de Control Posterior para la Administración Centralizada</option>
-            <option>Departamento de Potestad Investigativa de Control Posterior para la Administración Centralizada</option>
-            <option>Dirección de Control Posterior para la Administración Descentralizada y Otro Poder</option>
-            <option>Departamento de Auditorías de Control Posterior para la Administración Descentralizada y Otro Poder</option>
-            <option>Departamento de Potestad Investigativa de Control Posterior para la Administración Descentralizada y Otro Poder</option>
-            <option>Dirección de Informática y Sistemas</option>
-            <option>Departamento de Informática y Sistemas</option>
-            <option>Departamento de Métodos y Procedimientos</option>
-            <option>Dirección de Talento Humano</option>
-            <option>Departamento de Talento Humano</option>
-            <option>Coordinación de Higiene, ambiente y salud laboral</option>
-            <option>Dirección de Administración y Servicios Generales</option>
-            <option>Departamento de Administración, planificación y presupuesto</option>
-            <option>Departamento de Contabilidad</option>
-            <option>Departamento de Archivo Central</option>
-            <option>Departamento de Servicios Generales y Manteniendo</option>
-            <option>Coordinación de Servicios Generales y Mantenimiento</option>
-            <option>Dirección de Auditoría Interna</option>
-            <option>Departamento de Control Posterior (AI)</option>
-            <option>Departamento de Determinación de Responsabilidades (AI)</option>
-          </select>
+          <select id="dependencia"></select>
         </div>
 
-        <label>Observaciones</label>
-        <textarea id="obs"></textarea>
+        <div class="row">
+          <label>Observaciones</label>
+          <textarea id="obs"></textarea>
+        </div>
+
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-          <button type="submit">Registrar</button>
+          <button id="submitBtn" type="submit">Registrar</button>
+          <button id="cancelEdit" type="button" style="display:none;background:#6b7280">Cancelar</button>
         </div>
       </form>
     </aside>
@@ -204,162 +170,442 @@
   </footer>
 
   <script>
-    const LS_KEY="inventario_cmao";
-    let state={movimientos:[],stock:{}};
-    const $ = sel => document.querySelector(sel);
+  // ---------- Estado y utilidades ----------
+  const LS_KEY = "inventario_cmao";
+  let state = { movimientos: [], stock: {} };
+  let editingId = null;
+  const $ = sel => document.querySelector(sel);
+  const dependencias = [
+    "Despacho del Contralor(a)","Despacho del Sub-Contralor","Departamento de Seguridad Física",
+    "Dirección de Despacho","Dirección de Consultoría Jurídica","Dirección de Relaciones Interinstitucionales",
+    "Dirección de Determinación de Responsabilidades","Dirección de Bienes","Departamento de Bienes",
+    "Dirección de Atención al Ciudadano","Departamento de Atención al Ciudadano",
+    "Dirección de Control Posterior para la Administración Centralizada",
+    "Departamento de Auditorías de Control Posterior para la Administración Centralizada",
+    "Departamento de Potestad Investigativa de Control Posterior para la Administración Centralizada",
+    "Dirección de Control Posterior para la Administración Descentralizada y Otro Poder",
+    "Departamento de Auditorías de Control Posterior para la Administración Descentralizada y Otro Poder",
+    "Departamento de Potestad Investigativa de Control Posterior para la Administración Descentralizada y Otro Poder",
+    "Dirección de Informática y Sistemas","Departamento de Informática y Sistemas","Departamento de Métodos y Procedimientos",
+    "Dirección de Talento Humano","Departamento de Talento Humano","Coordinación de Higiene, ambiente y salud laboral",
+    "Dirección de Administración y Servicios Generales","Departamento de Administración, planificación y presupuesto",
+    "Departamento de Contabilidad","Departamento de Archivo Central",
+    "Departamento de Servicios Generales y Manteniendo","Coordinación de Servicios Generales y Mantenimiento",
+    "Dirección de Auditoría Interna","Departamento de Control Posterior (AI)",
+    "Departamento de Determinación de Responsabilidades (AI)"
+  ];
 
-    function save(){localStorage.setItem(LS_KEY,JSON.stringify(state))}
-    function load(){let raw=localStorage.getItem(LS_KEY); if(raw){ try{state=JSON.parse(raw)}catch(e){state={movimientos:[],stock:{}}}}}
-
-    function render(){
-      let filtroDep=$("#filtroDependencia").value;
-      const movsFiltrados = state.movimientos.filter(m=> !filtroDep || m.dependencia===filtroDep);
-
-      // movimientos
-      const tbody=$("#movTable tbody"); tbody.innerHTML="";
-      movsFiltrados.slice().sort((a,b)=> new Date(b.fecha)-new Date(a.fecha)).forEach(m=>{
-        let tr=document.createElement("tr");
-        tr.innerHTML=`<td>${m.fecha}</td>
-          <td><span class="badge ${m.tipo=="entrada"?"in":"out"}">${m.tipo}</span></td>
-          <td>${m.item}</td>
-          <td>${m.cantidad}</td>
-          <td>${m.tipo==="salida"?m.dependencia:"-"}</td>`;
-        tbody.appendChild(tr);
-      });
-
-      // stock
-      const tb2=$("#stockTable tbody"); tb2.innerHTML="";
-      for(const k in state.stock){
-        let s=state.stock[k];
-        let tr=document.createElement("tr");
-        tr.innerHTML=`<td>${s.item}</td><td>${s.unidad}</td><td>${s.cantidad}</td>`;
-        tb2.appendChild(tr);
+  function save(){
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  }
+  function load(){
+    let raw = localStorage.getItem(LS_KEY);
+    if(raw){
+      try {
+        state = JSON.parse(raw);
+      } catch(e){
+        state = { movimientos: [], stock: {} };
       }
+    }
+  }
+  function genId(){
+    return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+  }
+  // rebuild stock from movements to avoid incremental errors
+  function rebuildStock(){
+    state.stock = {};
+    for(const m of state.movimientos){
+      const key = (m.item||'').toLowerCase().trim() + "||" + (m.unidad||'').toLowerCase().trim();
+      if(!state.stock[key]) state.stock[key] = { item: m.item, unidad: m.unidad, cantidad: 0 };
+      if(m.tipo === "entrada")
+        state.stock[key].cantidad += Number(m.cantidad);
+      else
+        state.stock[key].cantidad -= Number(m.cantidad);
+      if(state.stock[key].cantidad < 0)
+        state.stock[key].cantidad = 0;
+    }
+  }
 
-      // resumen
-      const sum=$("#summaryCards"); sum.innerHTML="";
-      let totalItems=Object.keys(state.stock).length;
-      let totalQty=Object.values(state.stock).reduce((a,b)=>a + (Number(b.cantidad)||0),0);
-      let div=document.createElement("div"); div.className="stat";
-      div.innerHTML=`<div class="num">${totalItems}</div><div>Ítems</div>`; sum.appendChild(div);
-      let div2=document.createElement("div"); div2.className="stat";
-      div2.innerHTML=`<div class="num">${totalQty}</div><div>Total Unidades</div>`; sum.appendChild(div2);
+  // ---------- Render ----------
+  function render(){
+    const filtroDep = $("#filtroDependencia").value;
+    const movsFiltrados = state.movimientos.filter(m => !filtroDep || m.dependencia === filtroDep);
+
+    // movimientos
+    const tbody = $("#movTable tbody");
+    tbody.innerHTML = "";
+    const rows = movsFiltrados.slice().sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+    for(const m of rows){
+      const tr = document.createElement("tr");
+      tr.dataset.id = m.id;
+      tr.innerHTML = `<td>${m.fecha}</td>
+        <td><span class="badge ${m.tipo=="entrada"?"in":"out"}">${m.tipo}</span></td>
+        <td>${m.item}</td>
+        <td>${m.cantidad}</td>
+        <td>${m.tipo==="salida"?m.dependencia:"-"}</td>
+        <td>${m.obs||""}</td>
+        <td class="row-actions">
+          <button type="button" onclick="startEdit('${m.id}')">✏️</button>
+          <button type="button" onclick="deleteMov('${m.id}')" style="background:#e11d48">🗑️</button>
+        </td>`;
+      tbody.appendChild(tr);
     }
 
-    function addMov(m){
-      let key=(m.item||'').toLowerCase().trim()+"||"+(m.unidad||'').toLowerCase().trim();
-      if(!state.stock[key]) state.stock[key]={item:m.item,unidad:m.unidad,cantidad:0};
-      if(m.tipo==="entrada") state.stock[key].cantidad += Number(m.cantidad);
-      else state.stock[key].cantidad -= Number(m.cantidad);
-      if(state.stock[key].cantidad<0) state.stock[key].cantidad=0;
+    // stock
+    const tb2 = $("#stockTable tbody");
+    tb2.innerHTML = "";
+    for(const k in state.stock){
+      const s = state.stock[k];
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${s.item}</td><td>${s.unidad}</td><td>${s.cantidad}</td>`;
+      tb2.appendChild(tr);
+    }
+
+    // resumen dinámico
+    const sum = $("#summaryCards");
+    sum.innerHTML = "";
+    const totalItems = Object.keys(state.stock).length;
+    const totalQty = Object.values(state.stock).reduce((a,b) => a + (Number(b.cantidad)||0),0);
+    const entradasFiltered = movsFiltrados.reduce((acc,m) => acc + (m.tipo==="entrada"?Number(m.cantidad):0),0);
+    const salidasFiltered = movsFiltrados.reduce((acc,m) => acc + (m.tipo==="salida"?Number(m.cantidad):0),0);
+
+    const div1 = document.createElement("div");
+    div1.className = "stat";
+    div1.innerHTML = `<div class="num">${totalItems}</div><div>Ítems (totales)</div>`;
+    sum.appendChild(div1);
+
+    const div2 = document.createElement("div");
+    div2.className = "stat";
+    div2.innerHTML = `<div class="num">${totalQty}</div><div>Total Unidades</div>`;
+    sum.appendChild(div2);
+
+    const div3 = document.createElement("div");
+    div3.className = "stat";
+    div3.innerHTML = `<div class="num">${entradasFiltered}</div><div>Entradas (filtro)</div>`;
+    sum.appendChild(div3);
+
+    const div4 = document.createElement("div");
+    div4.className = "stat";
+    div4.innerHTML = `<div class="num">${salidasFiltered}</div><div>Salidas (filtro)</div>`;
+    sum.appendChild(div4);
+  }
+
+  // ---------- CRUD ----------
+  function addOrUpdateMov(m){
+    if(editingId){
+      const idx = state.movimientos.findIndex(x => x.id === editingId);
+      if(idx !== -1)
+        state.movimientos[idx] = Object.assign({ id: editingId }, m);
+      editingId = null;
+      $("#submitBtn").textContent = "Registrar";
+      $("#cancelEdit").style.display = "none";
+    } else {
+      m.id = genId();
       state.movimientos.push(m);
-      save(); render();
     }
+    rebuildStock();
+    save();
+    render();
+  }
+  function startEdit(id){
+    const idx = state.movimientos.findIndex(x => x.id === id);
+    if(idx === -1) return;
+    const m = state.movimientos[idx];
+    if(!confirm("¿Editar este movimiento?")) return;
+    editingId = id;
+    $("#tipo").value = m.tipo;
+    $("#item").value = m.item;
+    $("#unidad").value = m.unidad;
+    $("#cantidad").value = m.cantidad;
+    $("#fecha").value = m.fecha;
+    $("#obs").value = m.obs || "";
+    if(m.tipo === "salida"){
+      $("#dependenciaBox").style.display = "block";
+      $("#dependencia").value = m.dependencia;
+    } else {
+      $("#dependenciaBox").style.display = "none";
+      $("#dependencia").value = "";
+    }
+    $("#submitBtn").textContent = "Guardar cambios";
+    $("#cancelEdit").style.display = "inline-block";
+  }
+  function cancelEdit(){
+    editingId = null;
+    $("#movForm").reset();
+    let today = new Date().toISOString().slice(0,10);
+    $("#fecha").value = today;
+    $("#submitBtn").textContent = "Registrar";
+    $("#cancelEdit").style.display = "none";
+    $("#dependenciaBox").style.display = "none";
+    $("#dependencia").value = "";
+  }
+  function deleteMov(id){
+    if(!confirm("¿Eliminar este movimiento?")) return;
+    const idx = state.movimientos.findIndex(x => x.id === id);
+    if(idx === -1) return;
+    state.movimientos.splice(idx,1);
+    rebuildStock();
+    save();
+    render();
+  }
 
-    async function loadImageAsDataURL(url){
-      return new Promise((resolve,reject)=>{
-        const img = new Image();
-        img.crossOrigin="Anonymous";
-        img.onload=()=>{ 
-          const canvas=document.createElement('canvas');
-          canvas.width=img.width; canvas.height=img.height;
+  // ---------- Cargar imagen (para jsPDF) ----------
+  async function loadImageAsDataURL(src){
+    return new Promise(resolve => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width; canvas.height = img.height;
           canvas.getContext('2d').drawImage(img,0,0);
           resolve(canvas.toDataURL('image/jpeg'));
+        } catch(e){
+          resolve(src);
         }
-        img.onerror=reject;
-        img.src=url;
+      };
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+  }
+
+  // ---------- Filtrado sencillo desde UI ----------
+  function getFilteredMovements(){
+    const filtroDep = $("#filtroDependencia").value;
+    return state.movimientos.filter(m => !filtroDep || m.dependencia === filtroDep);
+  }
+
+  // ---------- Exportaciones PDF (modulares) ----------
+  async function exportStockPDF(doc, headerHeight, leftLogo, rightLogo){
+    const pageWidth = doc.internal.pageSize.getWidth();
+    doc.autoTable({
+      head: [['Ítem','Unidad','Cantidad']],
+      body: Object.values(state.stock).map(s => [s.item, s.unidad, s.cantidad]),
+      margin: { top: headerHeight },
+      styles: { halign: 'center' },
+      headStyles: { fillColor: [36,0,156] }
+    });
+  }
+  async function exportMovementsPDF(doc, headerHeight, leftLogo, rightLogo){
+    const filtered = getFilteredMovements();
+    let finalY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 20 : headerHeight + 20;
+    doc.autoTable({
+      head: [['Fecha','Tipo','Ítem','Unidad','Cantidad','Dependencia','Observaciones']],
+      body: filtered.map(m => [m.fecha||'', m.tipo||'', m.item||'', m.unidad||'', m.cantidad||'', m.tipo==="salida"?m.dependencia:"-", m.obs||'']),
+      startY: finalY,
+      styles: { fontSize: 9, halign: 'center', cellPadding: 4 },
+      headStyles: { fillColor: [36,0,156] }
+    });
+  }
+  async function exportDepsPDF(doc, headerHeight, leftLogo, rightLogo){
+    const filtered = getFilteredMovements();
+    const salidas = filtered.filter(m => m.tipo === "salida" && m.dependencia);
+    const deps = {};
+    salidas.forEach(m => {
+      if(!deps[m.dependencia]) deps[m.dependencia] = [];
+      deps[m.dependencia].push(m);
+    });
+    let finalY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 20 : headerHeight + 20;
+    for(const dep in deps){
+      doc.setFontSize(11); doc.setFont(undefined,'bold');
+      doc.text(`Dependencia: ${dep}`, 40, finalY);
+      finalY += 14;
+      const rows = deps[dep].map(m => [m.item, m.fecha, m.cantidad, m.obs||'']);
+      doc.autoTable({
+        head: [['Ítem','Fecha','Cantidad','Observaciones']],
+        body: rows,
+        startY: finalY,
+        styles: { fontSize: 9, halign: 'center', cellPadding: 3 },
+        headStyles: { fillColor: [36,0,156] }
+      });
+      finalY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 6 : finalY + 40;
+      const totalDep = deps[dep].reduce((a,b) => a + Number(b.cantidad||0),0);
+      doc.setFontSize(10); doc.setFont(undefined,'normal');
+      doc.text(`TOTAL de salidas para esta dependencia: ${totalDep}`, 60, finalY);
+      finalY += 20;
+      if(finalY > doc.internal.pageSize.getHeight() - 120){
+        doc.addPage();
+        finalY = 80;
+      }
+    }
+  }
+
+  async function prepareAndSavePDF(kind){
+    if(state.movimientos.length === 0 && kind !== 'inventario'){
+      if(!confirm("No hay movimientos. Desea continuar y exportar solo stock?")) return;
+    }
+    const leftLogo = await loadImageAsDataURL('CGR EN NEDRO (PNG).png');
+    const rightLogo = await loadImageAsDataURL('5080122107400138485_121.jpg');
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const headerHeight = 90;
+
+    if(kind === 'inventario'){
+      await exportStockPDF(doc, headerHeight, leftLogo, rightLogo);
+    } else if(kind === 'movimientos'){
+      await exportMovementsPDF(doc, headerHeight, leftLogo, rightLogo);
+    } else if(kind === 'resumen'){
+      await exportDepsPDF(doc, headerHeight, leftLogo, rightLogo);
+    } else if(kind === 'todo'){
+      await exportStockPDF(doc, headerHeight, leftLogo, rightLogo);
+      await exportMovementsPDF(doc, headerHeight, leftLogo, rightLogo);
+      await exportDepsPDF(doc, headerHeight, leftLogo, rightLogo);
+
+      let finalY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 20 : headerHeight + 20;
+      if(finalY > doc.internal.pageSize.getHeight() - 200){
+        doc.addPage();
+        finalY = 80;
+      }
+      doc.setFontSize(12); doc.setFont(undefined,'bold');
+      doc.text("RESUMEN GLOBAL POR DEPENDENCIA", pageWidth/2, finalY, { align: 'center' });
+      finalY += 18;
+      const resumenDep = {};
+      state.movimientos.forEach(m => {
+        const d = m.dependencia || 'Sin dependencia';
+        if(!resumenDep[d]) resumenDep[d] = { entradas: 0, salidas: 0 };
+        if(m.tipo === 'entrada') resumenDep[d].entradas += Number(m.cantidad)||0;
+        if(m.tipo === 'salida') resumenDep[d].salidas += Number(m.cantidad)||0;
+      });
+      const bodyDep = Object.entries(resumenDep).map(([dep, data]) => [dep, data.entradas, data.salidas, (data.entradas - data.salidas)]);
+      doc.autoTable({
+        head: [['Dependencia','Entradas','Salidas','Saldo']],
+        body: bodyDep,
+        startY: finalY,
+        styles: { fontSize: 9, halign: 'center' },
+        headStyles: { fillColor: [36,0,156] }
+      });
+      finalY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 20 : finalY + 20;
+      if(finalY > doc.internal.pageSize.getHeight() - 200){
+        doc.addPage();
+        finalY = 80;
+      }
+      doc.setFontSize(12); doc.setFont(undefined,'bold');
+      doc.text("RESUMEN GLOBAL POR ÍTEM", pageWidth/2, finalY, { align: 'center' });
+      finalY += 18;
+      const resumenItem = {};
+      state.movimientos.forEach(m => {
+        if(!resumenItem[m.item]) resumenItem[m.item] = { entradas: 0, salidas: 0 };
+        if(m.tipo === 'entrada') resumenItem[m.item].entradas += Number(m.cantidad)||0;
+        if(m.tipo === 'salida') resumenItem[m.item].salidas += Number(m.cantidad)||0;
+      });
+      const bodyItem = Object.entries(resumenItem).map(([it, data]) => [it, data.entradas, data.salidas, (data.entradas - data.salidas)]);
+      doc.autoTable({
+        head: [['Ítem','Entradas','Salidas','Saldo']],
+        body: bodyItem,
+        startY: finalY,
+        styles: { fontSize: 9, halign: 'center' },
+        headStyles: { fillColor: [36,0,156] }
       });
     }
 
-    document.addEventListener("DOMContentLoaded", async ()=>{
-      load(); render();
-      let today=new Date().toISOString().slice(0,10);
-      $("#fecha").value=today;
+    const pageCount = (typeof doc.getNumberOfPages === 'function') ?
+      doc.getNumberOfPages() : doc.internal.getNumberOfPages();
+    for(let i = 1; i <= pageCount; i++){
+      doc.setPage(i);
+      try { if(leftLogo) doc.addImage(leftLogo, 'JPEG', 20, 18, 60, 36); } catch(e){}
+      try { if(rightLogo) doc.addImage(rightLogo, 'JPEG', pageWidth - 80, 18, 60, 36); } catch(e){}
+      doc.setFontSize(11); doc.setFont(undefined,'bold');
+      doc.text("República Bolivariana de Venezuela", pageWidth/2, 24, { align: 'center' });
+      doc.setFontSize(10); doc.setFont(undefined,'normal');
+      doc.text("Ciudad Bolívar - Estado Bolívar", pageWidth/2, 38, { align: 'center' });
+      doc.text("Contraloría del Municipio Angostura del Orinoco", pageWidth/2, 52, { align: 'center' });
+      doc.text("Dirección de Administración y Servicios Generales", pageWidth/2, 66, { align: 'center' });
+      doc.text("Departamento de Administración, Planificación y Presupuesto", pageWidth/2, 80, { align: 'center' });
 
-      $("#tipo").addEventListener("change",()=>{
-        if($("#tipo").value==="salida") $("#dependenciaBox").style.display="block";
-        else {$("#dependenciaBox").style.display="none"; $("#dependencia").value="";}
-      });
+      const pageHeight = doc.internal.pageSize.getHeight();
+      doc.setFontSize(9);
+      doc.text("DPTOAPP-XX-XX-25", 20, pageHeight - 20);
+      doc.text(`Página ${i} de ${pageCount}`, pageWidth - 20, pageHeight - 20, { align: 'right' });
+    }
 
-      $("#movForm").addEventListener("submit",e=>{
-        e.preventDefault();
-        const mov={
-          fecha:$("#fecha").value,
-          item:$("#item").value.trim(),
-          unidad:$("#unidad").value.trim()||"und",
-          cantidad:Number($("#cantidad").value),
-          tipo:$("#tipo").value,
-          dependencia: $("#tipo").value==="salida"?$("#dependencia").value:"",
-          obs:$("#obs").value
-        };
-        addMov(mov);
-        e.target.reset();
-        $("#fecha").value=today;
-      });
+    const filename = (function(k){
+      if(k === 'inventario') return "inventario_stock.pdf";
+      if(k === 'movimientos') return "inventario_movimientos.pdf";
+      if(k === 'resumen') return "inventario_resumen_dependencias.pdf";
+      return "inventario_todo.pdf";
+    })(kind);
+    doc.save(filename);
+  }
 
-      $("#filtroDependencia").addEventListener("change",()=>render());
-
-      $("#btnExport").addEventListener("click", async ()=>{
-        if(state.movimientos.length===0){alert("No hay movimientos registrados para generar el PDF."); return;}
-        if(!confirm("¿Desea generar el PDF del inventario?")) return;
-
-        const leftLogo = await loadImageAsDataURL('Logo cmao.jpg');   // Contraloría (izquierda)
-        const rightLogo = await loadImageAsDataURL('5080122107400138485_121.jpg');  // SNFC (derecha)
-
-        const { jsPDF }=window.jspdf;
-        const doc=new jsPDF({unit:'pt',format:'a4'});
-        const pageWidth=doc.internal.pageSize.getWidth();
-        const headerHeight=90;
-
-        // Stock
-        doc.autoTable({
-          head:[['Ítem','Unidad','Cantidad']],
-          body:Object.values(state.stock).map(s=>[s.item,s.unidad,s.cantidad]),
-          margin:{top:headerHeight},
-          styles:{halign:'center'},
-          headStyles:{fillColor:[36,0,156]}
-        });
-
-        let finalY=(doc.lastAutoTable && doc.lastAutoTable.finalY)?doc.lastAutoTable.finalY+20:headerHeight+20;
-
-        // Movimientos
-        doc.autoTable({
-          head:[['Fecha','Tipo','Ítem','Unidad','Cantidad','Dependencia','Observaciones']],
-          body:state.movimientos.map(m=>[m.fecha||'',m.tipo||'',m.item||'',m.unidad||'',m.cantidad||'',m.tipo==="salida"?m.dependencia:"-",m.obs||'']),
-          startY:finalY,
-          styles:{fontSize:9,halign:'center',cellPadding:4},
-          headStyles:{fillColor:[36,0,156]}
-        });
-
-        const pageCount=(typeof doc.getNumberOfPages==='function')?doc.getNumberOfPages():doc.internal.getNumberOfPages();
-
-        for(let i=1;i<=pageCount;i++){
-          doc.setPage(i);
-          if(leftLogo){try{ doc.addImage(leftLogo, 'JPEG', 20, 18, 60, 36); } catch(e){}}
-          if(rightLogo){try{ doc.addImage(rightLogo, 'JPEG', pageWidth - 80, 18, 60, 36); } catch(e){}}
-
-          doc.setFontSize(11); doc.setFont(undefined,'bold'); doc.text("República Bolivariana de Venezuela", pageWidth/2, 24, { align: 'center' });
-          doc.setFontSize(10); doc.setFont(undefined,'normal');
-          doc.text("Ciudad Bolívar - Estado Bolívar", pageWidth/2, 38, { align: 'center' });
-          doc.text("Contraloría del Municipio Angostura del Orinoco", pageWidth/2, 52, { align: 'center' });
-          doc.text("Departamento de Administración, Planificación y Presupuesto", pageWidth/2, 72, { align: 'center' });
-
-          const pageHeight = doc.internal.pageSize.getHeight();
-          doc.setFontSize(9);
-          doc.text(`Pág: ${i} de ${pageCount}`, pageWidth-60, pageHeight - 20);
-          doc.text("DPTOAPP-XX-XX-25", 20, pageHeight - 20);
-        }
-
-        doc.save("inventario.pdf");
-      });
-
-      $("#btnClear").addEventListener("click",()=>{
-        if(confirm("¿Desea borrar todos los registros?")){
-          state={movimientos:[],stock:{}};
-          save(); render();
-        }
-      });
+  // ---------- Inicialización y eventos ----------
+  document.addEventListener("DOMContentLoaded", async () => {
+    load();
+    // poblar selects dependencias
+    dependencias.forEach(d => {
+      const o = document.createElement("option");
+      o.value = d;
+      o.textContent = d;
+      $("#filtroDependencia").appendChild(o.cloneNode(true));
+      $("#dependencia").appendChild(o.cloneNode(true));
     });
-  </script>
+    // set fecha hoy
+    let today = new Date().toISOString().slice(0,10);
+    $("#fecha").value = today;
+    rebuildStock();
+    render();
+
+    // evento cambio tipo
+    $("#tipo").addEventListener("change", () => {
+      if($("#tipo").value === "salida"){
+        $("#dependenciaBox").style.display = "block";
+      } else {
+        $("#dependenciaBox").style.display = "none";
+        $("#dependencia").value = "";
+      }
+    });
+
+    $("#movForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const mov = {
+        fecha: $("#fecha").value,
+        item: $("#item").value.trim(),
+        unidad: $("#unidad").value.trim() || "und",
+        cantidad: Number($("#cantidad").value),
+        tipo: $("#tipo").value,
+        dependencia: $("#tipo").value === "salida" ? $("#dependencia").value : "",
+        obs: $("#obs").value.trim()
+      };
+      if(!mov.item || !mov.cantidad || !mov.fecha || !mov.tipo){
+        alert("Complete los campos obligatorios.");
+        return;
+      }
+      if(mov.tipo === "salida" && !mov.dependencia){
+        alert("Seleccione la dependencia para la salida.");
+        return;
+      }
+      addOrUpdateMov(mov);
+
+      // limpiar solo campos, no hacer reset completo
+      $("#item").value = "";
+      $("#unidad").value = "";
+      $("#cantidad").value = 1;
+      $("#obs").value = "";
+      if($("#tipo").value === "entrada"){
+        $("#dependenciaBox").style.display = "none";
+        $("#dependencia").value = "";
+      }
+    });
+
+    $("#cancelEdit").addEventListener("click", () => cancelEdit());
+    $("#filtroDependencia").addEventListener("change", () => render());
+    $("#btnExportAll").addEventListener("click", async () => await prepareAndSavePDF('todo'));
+    $("#btnExportStock").addEventListener("click", async () => await prepareAndSavePDF('inventario'));
+    $("#btnExportMoves").addEventListener("click", async () => await prepareAndSavePDF('movimientos'));
+    $("#btnExportDeps").addEventListener("click", async () => await prepareAndSavePDF('resumen'));
+    $("#btnClear").addEventListener("click", () => {
+      if(confirm("¿Desea borrar todos los registros?")){
+        state = { movimientos: [], stock: {} };
+        save();
+        render();
+      }
+    });
+  });
+
+  // Exponer para onclick inline
+  window.startEdit = startEdit;
+  window.deleteMov = deleteMov;
+  window.exportarPDF = prepareAndSavePDF;
+</script>
 </body>
 </html>
